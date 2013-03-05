@@ -14,14 +14,11 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QHeaderView>
-#include <QtWidgets/QListView>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPushButton>
-#include <QtWidgets/QScrollArea>
-#include <QtWidgets/QScrollBar>
 #include <QtWidgets/QStatusBar>
-#include <QtWidgets/QTextBrowser>
+#include <QtWidgets/QTextEdit>
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QWidget>
 
@@ -31,12 +28,8 @@ class Ui_ChatWindow
 {
 public:
     QWidget *centralWidget;
-    QScrollArea *scrollArea;
-    QWidget *scrollAreaWidgetContents;
-    QScrollBar *verticalScrollBar;
-    QTextBrowser *textBrowser;
     QPushButton *sendButton;
-    QListView *listView;
+    QTextEdit *textEdit;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -48,28 +41,13 @@ public:
         ChatWindow->resize(802, 475);
         centralWidget = new QWidget(ChatWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
-        scrollArea = new QScrollArea(centralWidget);
-        scrollArea->setObjectName(QStringLiteral("scrollArea"));
-        scrollArea->setGeometry(QRect(180, 20, 611, 261));
-        scrollArea->setWidgetResizable(true);
-        scrollAreaWidgetContents = new QWidget();
-        scrollAreaWidgetContents->setObjectName(QStringLiteral("scrollAreaWidgetContents"));
-        scrollAreaWidgetContents->setGeometry(QRect(0, 0, 609, 259));
-        verticalScrollBar = new QScrollBar(scrollAreaWidgetContents);
-        verticalScrollBar->setObjectName(QStringLiteral("verticalScrollBar"));
-        verticalScrollBar->setGeometry(QRect(590, 0, 20, 261));
-        verticalScrollBar->setOrientation(Qt::Vertical);
-        textBrowser = new QTextBrowser(scrollAreaWidgetContents);
-        textBrowser->setObjectName(QStringLiteral("textBrowser"));
-        textBrowser->setGeometry(QRect(0, 0, 591, 261));
-        scrollArea->setWidget(scrollAreaWidgetContents);
         sendButton = new QPushButton(centralWidget);
         sendButton->setObjectName(QStringLiteral("sendButton"));
-        sendButton->setGeometry(QRect(690, 320, 101, 71));
+        sendButton->setGeometry(QRect(690, 320, 101, 91));
         sendButton->setCheckable(false);
-        listView = new QListView(centralWidget);
-        listView->setObjectName(QStringLiteral("listView"));
-        listView->setGeometry(QRect(0, 20, 171, 401));
+        textEdit = new QTextEdit(centralWidget);
+        textEdit->setObjectName(QStringLiteral("textEdit"));
+        textEdit->setGeometry(QRect(80, 320, 601, 91));
         ChatWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(ChatWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));

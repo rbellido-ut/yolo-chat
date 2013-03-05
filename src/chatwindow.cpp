@@ -13,3 +13,8 @@ ChatWindow::~ChatWindow()
 {
     delete ui;
 }
+
+void ChatWindow::on_sendButton_clicked()
+{
+
+}
