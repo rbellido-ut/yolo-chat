@@ -13,8 +13,13 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        chatwindow.cpp
+        chatwindow.cpp \
+    client/client_net.cpp \
+    server/server_net.cpp
 
-HEADERS  += chatwindow.h
+HEADERS  += chatwindow.h \
+    client/client_net.h \
+    server/server_net.h \
+    utils.h
 
 FORMS    += chatwindow.ui

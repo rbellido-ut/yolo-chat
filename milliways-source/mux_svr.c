@@ -42,7 +42,7 @@
 // Function Prototypes
 static void SystemFatal(const char* );
 
-int main (int argc, char **argv)
+int mux_serv(int argc, char **argv)
 {
 	int i, maxi, nready, bytes_to_read, arg;
 	int listen_sd, new_sd, sockfd, client_len, port, maxfd, client[FD_SETSIZE];

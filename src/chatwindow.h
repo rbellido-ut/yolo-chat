@@ -2,6 +2,8 @@
 #define CHATWINDOW_H
 
 #include <QMainWindow>
+#include "client/client_net.h"
+#include "server/server_net.h"
 
 namespace Ui {
 class ChatWindow;
@@ -17,9 +19,13 @@ public:
     
 private slots:
     void on_sendButton_clicked();
+    void on_actionExit_triggered();
 
 private:
     Ui::ChatWindow *ui;
+    ClientNetwork *client_;
+    ServerNetwork *server_;
+
 };
 
 #endif // CHATWINDOW_H

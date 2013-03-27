@@ -33,14 +33,27 @@
      <bool>false</bool>
     </property>
    </widget>
-   <widget class="QTextEdit" name="textEdit">
+   <widget class="QTextEdit" name="chatText">
     <property name="geometry">
      <rect>
-      <x>80</x>
+      <x>130</x>
       <y>320</y>
-      <width>601</width>
+      <width>551</width>
       <height>91</height>
      </rect>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="chatDisplay">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>0</y>
+      <width>661</width>
+      <height>301</height>
+     </rect>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
     </property>
    </widget>
   </widget>

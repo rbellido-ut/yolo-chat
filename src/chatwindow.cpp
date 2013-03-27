@@ -16,5 +16,10 @@ ChatWindow::~ChatWindow()
 
 void ChatWindow::on_sendButton_clicked()
 {
+    //send text in textbox to socket
+}
 
+void ChatWindow::on_actionExit_triggered()
+{
+    qApp->quit();
 }
