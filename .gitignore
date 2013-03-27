@@ -31,3 +31,6 @@
 *.lai
 *.la
 *.a
+
+#QT creator stuff
+*.pro.user
