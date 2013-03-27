@@ -26,6 +26,8 @@ private:
     int acceptsocket_;
     int listensocket_;
     std::string error_;
+    struct sockaddr_in server_;
+    struct sockaddr_in client_addr;
 
     void set_error(std::string errormsg) {
         error_ = errormsg;

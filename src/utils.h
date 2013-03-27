@@ -12,5 +12,6 @@
 #define DEFAULT_PORT 7000
 #define DEFAULT_HOST "localhost"
 #define BUFFER_LEN 80
+#define LISTENQ 5
 
 #endif // UTILS_H
