@@ -15,11 +15,17 @@ TEMPLATE = app
 SOURCES += main.cpp\
         chatwindow.cpp \
     client/client_net.cpp \
-    server/server_net.cpp
+    server/server_net.cpp \
+    clientsettingsdialog.cpp \
+    serversettingsdialog.cpp
 
 HEADERS  += chatwindow.h \
     client/client_net.h \
     server/server_net.h \
-    utils.h
+    utils.h \
+    clientsettingsdialog.h \
+    serversettingsdialog.h
 
-FORMS    += chatwindow.ui
+FORMS    += chatwindow.ui \
+    clientsettingsdialog.ui \
+    serversettingsdialog.ui

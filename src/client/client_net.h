@@ -7,23 +7,27 @@ namespace ClientNet {
 }
 
 class ClientNetwork {
+
 public:
-    ClientNetwork(){
+    ClientNetwork() {
         connectsocket_ = 0;
         error_ = "";
     }
 
-    ~ClientNetwork(){
+    ~ClientNetwork() {
         close(connectsocket_);
     }
-    int start_client(int port, char * host);
 
-    void send_text(std::string text);
-    std::string receive_text();
+    int start_client(int port, char * host);
 
     std::string get_error() {
         return error_;
     }
+
+    void send_text(std::string text);
+
+    //TODO: might have to put this in a thread
+    std::string receive_text();
 
 private:
     int connectsocket_;

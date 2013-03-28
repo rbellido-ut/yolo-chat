@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include "client/client_net.h"
 #include "server/server_net.h"
+#include "clientsettingsdialog.h"
+#include "serversettingsdialog.h"
 
 namespace Ui {
 class ChatWindow;
@@ -21,10 +23,20 @@ private slots:
     void on_sendButton_clicked();
     void on_actionExit_triggered();
 
+    void on_actionClient_triggered();
+
+    void on_actionServer_triggered();
+
 private:
     Ui::ChatWindow *ui;
-    ClientNetwork *client_;
-    ServerNetwork *server_;
+
+    //GUI objects
+    ClientSettingsDialog *cDlg;
+    ServerSettingsDialog *sDlg;
+
+    //Networking objects
+    ClientNetwork client_;
+    ServerNetwork server_;
 
 };
 

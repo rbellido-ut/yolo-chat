@@ -7,6 +7,8 @@ ChatWindow::ChatWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    cDlg = new ClientSettingsDialog();
+    sDlg = new ServerSettingsDialog();
 }
 
 ChatWindow::~ChatWindow()
@@ -22,4 +24,14 @@ void ChatWindow::on_sendButton_clicked()
 void ChatWindow::on_actionExit_triggered()
 {
     qApp->quit();
+}
+
+void ChatWindow::on_actionClient_triggered()
+{
+    cDlg->show();
+}
+
+void ChatWindow::on_actionServer_triggered()
+{
+    sDlg->show();
 }

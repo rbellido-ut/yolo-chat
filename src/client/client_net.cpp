@@ -38,7 +38,7 @@ int ClientNetwork::start_client(int port, char * host)
 
     bcopy(hostentptr_->h_addr, (char *)&server_.sin_addr, hostentptr_->h_length);
 
-    if (connect (connectsocket_, (struct sockaddr *)&server_, sizeof(server_)) == -1)
+    if (connect(connectsocket_, (struct sockaddr *)&server_, sizeof(server_)) == -1)
     {
         set_error("Couldn't connect");
         return 0;
