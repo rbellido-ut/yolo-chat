@@ -12,6 +12,12 @@ ChatWindow::ChatWindow(QWidget *parent) :
 
     cDlg = new ClientSettingsDialog();
     sDlg = new ServerSettingsDialog();
+
+    this->statusBar()->showMessage("Idle");
+
+    QObject::connect(&client_, SIGNAL(statusChanged(QString)), this, SLOT(setStatus(const QString&)));
+    QObject::connect(cDlg, SIGNAL(clientIgnite(QString, QString)), this, SLOT(startClient(const QString&, const QString&)));
+    QObject::connect(sDlg, SIGNAL(serverIgnite(QString)), this, SLOT(startMuxServer(QString)));
 }
 
 ChatWindow::~ChatWindow()
