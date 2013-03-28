@@ -12,3 +12,8 @@ ClientSettingsDialog::~ClientSettingsDialog()
 {
     delete ui;
 }
+
+void ClientSettingsDialog::on_buttonBox_accepted()
+{
+    emit clientIgnite(ui->portInput->toPlainText(), ui->hostNameInput->toPlainText());
+}

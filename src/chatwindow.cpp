@@ -15,7 +15,7 @@ ChatWindow::ChatWindow(QWidget *parent) :
 
     this->statusBar()->showMessage("Idle");
 
-    QObject::connect(&client_, SIGNAL(statusChanged(QString)), this, SLOT(setStatus(const QString&)));
+    //QObject::connect(&client_, SIGNAL(statusChanged(QString)), this, SLOT(setStatusBar(const QString &)));
     QObject::connect(cDlg, SIGNAL(clientIgnite(QString, QString)), this, SLOT(startClient(const QString&, const QString&)));
     QObject::connect(sDlg, SIGNAL(serverIgnite(QString)), this, SLOT(startMuxServer(QString)));
 }
@@ -61,7 +61,8 @@ void ChatWindow::setStatusBar(const QString &s) {
 //Private slots implementation
 void ChatWindow::on_sendButton_clicked()
 {
-    //send text in textbox to socket
+    /*QString chatmsg = ui->chatText->toPlainText();
+    client_.send_text(chatmsg.toStdString());*/
 }
 
 void ChatWindow::on_actionExit_triggered()

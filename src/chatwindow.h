@@ -26,6 +26,7 @@ public slots:
     
 private slots:
     void on_sendButton_clicked();
+
     void on_actionExit_triggered();
 
     void on_actionClient_triggered();
