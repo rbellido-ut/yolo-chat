@@ -18,6 +18,11 @@ class ChatWindow : public QMainWindow
 public:
     explicit ChatWindow(QWidget *parent = 0);
     ~ChatWindow();
+
+public slots:
+    void startMuxServer(const QString &);
+    void startClient(const QString &, const QString &);
+    void setStatusBar(const QString &);
     
 private slots:
     void on_sendButton_clicked();

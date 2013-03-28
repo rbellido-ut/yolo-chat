@@ -18,7 +18,7 @@ public:
         close(connectsocket_);
     }
 
-    int start_client(int port, char * host);
+    int start_client(const int port, const char * host);
 
     std::string get_error() {
         return error_;

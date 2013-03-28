@@ -19,7 +19,7 @@
 ---------------------------------------------------------------------------------------*/
 #include "client_net.h"
 
-int ClientNetwork::start_client(int port, char * host)
+int ClientNetwork::start_client(const int port, const char * host)
 {
     if ((connectsocket_= socket(AF_INET, SOCK_STREAM, 0)) == -1)
     {

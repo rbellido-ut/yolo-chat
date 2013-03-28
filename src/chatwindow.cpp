@@ -1,3 +1,6 @@
+/**
+ * @author Ronald Bellido
+ */
 #include "chatwindow.h"
 #include "ui_chatwindow.h"
 
@@ -16,6 +19,40 @@ ChatWindow::~ChatWindow()
     delete ui;
 }
 
+//Public slots implementation
+/**
+ * Slot that starts the chat client
+ *
+ * @author Ronald Bellido
+ * @brief ChatWindow::startClient
+ */
+void ChatWindow::startClient(const QString& port, const QString& hostname) {
+    client_.start_client(port.toInt(), hostname.toUtf8().constData());
+}
+
+/**
+ * Slot that starts the multiplexing server
+ *
+ * @author Ronald Bellido
+ * @brief ChatWindow::startMuxServer
+ * @param port the port the server will listen for connections
+ */
+void ChatWindow::startMuxServer(const QString& port) {
+    server_.start_server(port.toInt());
+}
+
+/**
+ * Slot that sets the status bar to the specified string
+ *
+ * @author Ronald Bellido
+ * @brief ChatWindow::setStatusBar
+ * @param s the string to display
+ */
+void ChatWindow::setStatusBar(const QString &s) {
+    this->statusBar()->showMessage(s);
+}
+
+//Private slots implementation
 void ChatWindow::on_sendButton_clicked()
 {
     //send text in textbox to socket
