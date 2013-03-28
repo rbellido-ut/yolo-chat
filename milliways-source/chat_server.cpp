@@ -14,7 +14,7 @@
 --				Added fatal error wrapper function
 --
 --				March 25, 2013
---				Modified to work as a chat server
+--				mux_svr.c (from milliways) modified to work as a chat server
 --
 --
 --	DESIGNERS:		Based on Richard Stevens Example, p165-166
@@ -37,6 +37,7 @@
 #include <strings.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <vector>
 
 #define SERVER_TCP_PORT 7000	// Default port
 #define BUFLEN	255		//Buffer length
@@ -58,6 +59,8 @@ int main(int argc, char **argv)
 	char *bp, buf[BUFLEN];
    	ssize_t n;
    	fd_set rset, allset;
+   	
+    vector<string> hostnames; 
 
 	switch(argc)
 	{
@@ -115,6 +118,10 @@ int main(int argc, char **argv)
 				SystemFatal("accept error");
 
             cout << "Remote Address: " << inet_ntoa(client_addr.sin_addr) << endl;
+            
+            
+            string temphostname = inet_ntoa( ((struct sockaddr_in)client_addr).sin_addr);
+            hostnames.push_back(temphostname);
 
 	        for (i = 0; i < FD_SETSIZE; i++)
 	            if (client[i] < 0)
@@ -157,8 +164,19 @@ int main(int argc, char **argv)
 				//echo to every single client but the sender
 				for (j = 0; j <= maxi; j++)
 				{
-					if (client[j] == sockfd)
-						write(sockfd, buf, BUFLEN);   // echo to client
+				    int tempfd = client[j];
+				    
+		            if ((tempfd = client[j]) < 0)
+        				continue;
+				    
+				    
+					if (j != i)
+					{
+					    char msg[BUFLEN];
+				        sprintf(msg, "%s: %s", hostnames[i].c_str(), buf);
+				        
+						write(tempfd, msg, BUFLEN);   // echo to client
+					}
 				}
 
 				if (n == 0) // connection closed by client

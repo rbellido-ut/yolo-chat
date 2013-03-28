@@ -13,7 +13,7 @@
 --				While loop is based on the buffer length
 
 --				March 25, 2013
---				Modified to work as a chat client
+--				tcp_clnt.c is modified to work as a chat client [from milliways]
 --
 --
 --	DESIGNERS:		Aman Abdulla
@@ -40,6 +40,8 @@
 #include <unistd.h>
 #include <iostream>
 #include <pthread.h>
+#include <cstdio>
+#include "globals.h"
 
 #define SERVER_TCP_PORT		7000	// Default port
 #define BUFLEN			255  	// Buffer length
@@ -48,6 +50,11 @@ using namespace std;
 
 void * handle_recv_thread(void* args);
 
+typedef struct {
+    int socket;
+    bool log;
+} holder, *PHOLDER;
+
 int main (int argc, char **argv)
 {
 	int sd, port;
@@ -55,9 +62,13 @@ int main (int argc, char **argv)
 	struct sockaddr_in server;
 	char  *host, sbuf[BUFLEN], **pptr;
 	char str[16];
+	bool log = false;
 	pthread_t recv_thread_handle;
 
-	//TODO: add feature to save to a log file
+	holder *hold = (holder*) malloc(sizeof(holder));
+	hold->log = false;
+	hold->socket = -1;
+
 	switch(argc)
 	{
 		case 2:
@@ -68,8 +79,13 @@ int main (int argc, char **argv)
 			host =	argv[1];
 			port =	atoi(argv[2]);	// User specified port
 		break;
+		case 4:
+		    host = argv[1];
+		    port = atoi(argv[2]);
+		    hold->log = true; 
+		break;
 		default:
-			cerr << "Usage: " << argv[0] << " host [port]" << endl;
+			cerr << "Usage: " << argv[0] << " host [port] [log]" << endl;
 			exit(1);
 	}
 
@@ -99,8 +115,10 @@ int main (int argc, char **argv)
 	cout << "Connected: 	Server Name: " << hp->h_name << endl;
 	pptr = hp->h_addr_list;
 	cout << "\t\tIP Address: " << inet_ntop(hp->h_addrtype, *pptr, str, sizeof(str)) << endl;
+	
+	hold->socket = sd;
 
-	pthread_create(&recv_thread_handle, 0, handle_recv_thread, (void*) sd);
+	pthread_create(&recv_thread_handle, 0, handle_recv_thread, (void*) hold);
 
 	//TODO: if received command: 'quit' or SIGINT, then break the loop
 	while (1)
@@ -108,36 +126,61 @@ int main (int argc, char **argv)
 		//Get user's message
 		cout << ">> ";
 		fgets (sbuf, BUFLEN, stdin);
-
+        
 		// Transmit data through the socket
 		send (sd, sbuf, BUFLEN, 0);		
 	}
 
 	cout << "Disconnecting...Goodbye!" << endl;
 	close (sd);
+	free(hold);
 	return (0);
 }
 
+/*------------------------------------------------------------------------------------------------------------------
+ -- FUNCTION: handle_recv_thread
+ --
+ -- DATE: March 25, 2013
+ --
+ -- REVISIONS: March 25, 2013
+ --
+ -- DESIGNER: Ronald Belllido
+ --
+ -- PROGRAMMER: Ronald Bellido
+ --
+ -- INTERFACE: handle_recv_thread
+ --
+ -- RETURNS: void*
+ --
+ -- NOTES:
+Thread to handle any received messages
+----------------------------------------------------------------------------------------------------------------------*/
 void * handle_recv_thread(void* args)
 {
 	//printf("Receive:\n");
-	int sd = (int) args;
+    holder *h = (holder*) args;
 	int bytes_to_read = BUFLEN;
 	char *bp, rbuf[BUFLEN];
 	bp = rbuf;
+	
+	FILE * logfile = fopen("log.txt", "w+");
 
 	while (1)
 	{
 		//client makes repeated calls to recv until no more data is expected to arrive.
 		int n = 0;
-		while ((n = recv (sd, bp, bytes_to_read, 0)) < BUFLEN)
+		while ((n = recv (h->socket, bp, bytes_to_read, 0)) < BUFLEN)
 		{
 			bp += n;
 			bytes_to_read -= n;
 		}
-
-		//TODO: write received text into log file
-		cout << "received: " << rbuf << endl;
+		
+        if (h->log)
+            fprintf(logfile, "%s",rbuf);
+            
+		cout << rbuf << endl;
 		//fflush(stdout);
 	}
+	
+	fclose(logfile);
 }
