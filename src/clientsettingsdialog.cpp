@@ -15,5 +15,5 @@ ClientSettingsDialog::~ClientSettingsDialog()
 
 void ClientSettingsDialog::on_buttonBox_accepted()
 {
-    emit clientIgnite(ui->portInput->toPlainText(), ui->hostNameInput->toPlainText());
+    emit clientIgnite(ui->portInput->text(), ui->hostNameInput->text());
 }

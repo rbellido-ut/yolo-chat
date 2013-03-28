@@ -17,7 +17,7 @@
 --	DESIGNERS:		Based on Richard Stevens Example, p165-166
 --				Modified & redesigned: Aman Abdulla: February 16, 2001
 --
---				
+--
 --	PROGRAMMER:		Aman Abdulla
 --
 --	NOTES:
@@ -42,7 +42,7 @@
 // Function Prototypes
 static void SystemFatal(const char* );
 
-int mux_serv(int argc, char **argv)
+int main(int argc, char **argv)
 {
 	int i, maxi, nready, bytes_to_read, arg;
 	int listen_sd, new_sd, sockfd, client_len, port, maxfd, client[FD_SETSIZE];
@@ -67,7 +67,7 @@ int mux_serv(int argc, char **argv)
 	// Create a stream socket
 	if ((listen_sd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
 		SystemFatal("Cannot Create Socket!");
-	
+
 	// set SO_REUSEADDR so port can be resused imemediately after exit, i.e., after CTRL-c
         arg = 1;
         if (setsockopt (listen_sd, SOL_SOCKET, SO_REUSEADDR, &arg, sizeof(arg)) == -1)
@@ -81,7 +81,7 @@ int mux_serv(int argc, char **argv)
 
 	if (bind(listen_sd, (struct sockaddr *)&server, sizeof(server)) == -1)
 		SystemFatal("bind error");
-	
+
 	// Listen for connections
 	// queue up to LISTENQ connect requests
 	listen(listen_sd, LISTENQ);
@@ -105,20 +105,20 @@ int mux_serv(int argc, char **argv)
 			client_len = sizeof(client_addr);
 			if ((new_sd = accept(listen_sd, (struct sockaddr *) &client_addr, &client_len)) == -1)
 				SystemFatal("accept error");
-			
+
                         printf(" Remote Address:  %s\n", inet_ntoa(client_addr.sin_addr));
 
                         for (i = 0; i < FD_SETSIZE; i++)
-			if (client[i] < 0)
-            		{
-				client[i] = new_sd;	// save descriptor
-				break;
-            		}
-			if (i == FD_SETSIZE)
-         		{
-				printf ("Too many clients\n");
-            			exit(1);
-    			}
+                            if (client[i] < 0)
+                            {
+                                    client[i] = new_sd;	// save descriptor
+                                    break;
+                            }
+                            if (i == FD_SETSIZE)
+                            {
+                                    printf ("Too many clients\n");
+                                    exit(1);
+                            }
 
 			FD_SET (new_sd, &allset);     // add new descriptor to set
 			if (new_sd > maxfd)
@@ -146,7 +146,7 @@ int mux_serv(int argc, char **argv)
 					bytes_to_read -= n;
 				}
 				write(sockfd, buf, BUFLEN);   // echo to client
-				
+
 				if (n == 0) // connection closed by client
             			{
 					printf(" Remote Address:  %s closed connection\n", inet_ntoa(client_addr.sin_addr));
@@ -154,7 +154,7 @@ int mux_serv(int argc, char **argv)
 					FD_CLR(sockfd, &allset);
                				client[i] = -1;
             			}
-									            				
+
 				if (--nready <= 0)
             				break;        // no more readable descriptors
 			}

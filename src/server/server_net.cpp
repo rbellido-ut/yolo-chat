@@ -1,17 +1,17 @@
 #include "server_net.h"
 
-int ServerNetwork::start_server(int port) {
+bool ServerNetwork::start_server(int port) {
     if ((listensocket_ = socket(AF_INET, SOCK_STREAM, 0)) == -1)
     {
         set_error("Couldn't create listen socket");
-        return 0;
+        return false;
     }
 
     int arg = 1;
     if (setsockopt(listensocket_, SOL_SOCKET, SO_REUSEADDR, &arg, sizeof(arg)) == -1)
     {
         set_error("Couldn't set socket options");
-        return 0;
+        return false;
     }
 
 
@@ -23,17 +23,29 @@ int ServerNetwork::start_server(int port) {
     if (bind(listensocket_, (struct sockaddr *)&server_, sizeof(server_)) == -1)
     {
         set_error("Error binding the listening socket");
-        return 0;
+        return false;
     }
 
     // Listen for connections
     // queue up to LISTENQ connect requests
     listen(listensocket_, LISTENQ);
 
+    maxfd_ = listensocket_;
+    maxi_ = -1;
+    for (i = 0; i < FD_SETSIZE; i++)
+        client_[i] = -1;
+    FD_ZERO(&allset_);
+    FD_SET(listensocket_, &allset_);
+
+    return true;
+}
+
+bool ServerNetwork::handle_clients()
+{
     while (1)
     {
         rset_ = allset_;               // structure assignment
-        nready_ = select(nready_ + 1, &rset_, NULL, NULL, NULL);
+        nready_ = select(maxfd_ + 1, &rset_, NULL, NULL, NULL);
 
         if (FD_ISSET(listensocket_, &rset_)) // new client connection
         {
@@ -42,10 +54,14 @@ int ServerNetwork::start_server(int port) {
             {
                 //SystemFatal("accept error");
                 set_error("accept error");
-                return 0;
+                return false;
             }
 
              //printf(" Remote Address:  %s\n", inet_ntoa(client_addr.sin_addr));
+
+            //TODO:save each new client in a list (use the ip address)
+            std::string temp = inet_ntoa(client_addr_.sin_addr);
+            client_list_->push_back(temp);
 
             for (i = 0; i < FD_SETSIZE; i++)
                 if (client_[i] < 0)
@@ -57,7 +73,7 @@ int ServerNetwork::start_server(int port) {
             if (i == FD_SETSIZE)
             {
                 set_error("too many clients!");
-                return 0;
+                return false;
             }
 
             FD_SET (acceptsocket_, &allset_);     // add new descriptor to set
@@ -87,7 +103,14 @@ int ServerNetwork::start_server(int port) {
                     bp += n;
                     bytes_to_read_ -= n;
                 }
-                write(sockfd_, buf, BUFFER_LEN);   // echo to client
+
+                //echo to every single client but the sender
+                for (int j = 0; j <= maxi_; j++)
+                {
+                    if (client_[j] == sockfd_)
+                        continue;
+                    write(sockfd_, buf, BUFFER_LEN);
+                }
 
                 if (n == 0) // connection closed by client
                 {
@@ -102,5 +125,6 @@ int ServerNetwork::start_server(int port) {
             }
         }
     }
-    return 1;
+
+    return true;
 }

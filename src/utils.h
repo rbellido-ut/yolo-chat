@@ -9,6 +9,7 @@
 #include <strings.h>
 #include <iostream>
 #include <pthread.h>
+#include <vector>
 
 #include <QObject>
 

@@ -12,3 +12,8 @@ ServerSettingsDialog::~ServerSettingsDialog()
 {
     delete ui;
 }
+
+void ServerSettingsDialog::on_buttonBox_accepted()
+{
+    emit serverIgnite(ui->portInput->text());
+}

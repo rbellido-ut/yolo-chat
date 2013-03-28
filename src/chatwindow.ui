@@ -23,8 +23,11 @@
       <height>91</height>
      </rect>
     </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Send your message&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
     <property name="whatsThis">
-     <string extracomment="This is a comment"/>
+     <string extracomment="This is a comment">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="text">
      <string>Send</string>
@@ -44,6 +47,9 @@
     </property>
    </widget>
    <widget class="QTextEdit" name="chatDisplay">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>130</x>

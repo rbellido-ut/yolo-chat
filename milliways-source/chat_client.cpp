@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------------------
---	SOURCE FILE:		tcp_clnt.c - A simple TCP client program.
+--	SOURCE FILE:		chat_client.cpp - A simple TCP chat client program.
 --
---	PROGRAM:		tclnt.exe
+--	PROGRAM:		chat_client
 --
 --	FUNCTIONS:		Berkeley Socket API
 --
@@ -11,11 +11,15 @@
 --				January 2005
 --				Modified the read loop to use fgets.
 --				While loop is based on the buffer length
+
+--				March 25, 2013
+--				Modified to work as a chat client
 --
 --
 --	DESIGNERS:		Aman Abdulla
 --
 --	PROGRAMMERS:		Aman Abdulla
+--						Ronald Bellido
 --
 --	NOTES:
 --	The program will establish a TCP connection to a user specifed server.
@@ -34,19 +38,26 @@
 #include <strings.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <iostream>
+#include <pthread.h>
 
 #define SERVER_TCP_PORT		7000	// Default port
 #define BUFLEN			255  	// Buffer length
 
+using namespace std;
+
+void * handle_recv_thread(void* args);
+
 int main (int argc, char **argv)
 {
-	int n, bytes_to_read;
 	int sd, port;
 	struct hostent	*hp;
 	struct sockaddr_in server;
-	char  *host, *bp, rbuf[BUFLEN], sbuf[BUFLEN], **pptr;
+	char  *host, sbuf[BUFLEN], **pptr;
 	char str[16];
+	pthread_t recv_thread_handle;
 
+	//TODO: add feature to save to a log file
 	switch(argc)
 	{
 		case 2:
@@ -58,7 +69,7 @@ int main (int argc, char **argv)
 			port =	atoi(argv[2]);	// User specified port
 		break;
 		default:
-			fprintf(stderr, "Usage: %s host [port]\n", argv[0]);
+			cerr << "Usage: " << argv[0] << " host [port]" << endl;
 			exit(1);
 	}
 
@@ -73,7 +84,7 @@ int main (int argc, char **argv)
 	server.sin_port = htons(port);
 	if ((hp = gethostbyname(host)) == NULL)
 	{
-		fprintf(stderr, "Unknown server address\n");
+		cerr << "Unknown server address" << endl;
 		exit(1);
 	}
 	bcopy(hp->h_addr, (char *)&server.sin_addr, hp->h_length);
@@ -81,33 +92,52 @@ int main (int argc, char **argv)
 	// Connecting to the server
 	if (connect (sd, (struct sockaddr *)&server, sizeof(server)) == -1)
 	{
-		fprintf(stderr, "Can't connect to server\n");
+		cerr << "Can't connect to server" << endl;
 		perror("connect");
 		exit(1);
 	}
-	printf("Connected:    Server Name: %s\n", hp->h_name);
+	cout << "Connected: 	Server Name: " << hp->h_name << endl;
 	pptr = hp->h_addr_list;
-	printf("\t\tIP Address: %s\n", inet_ntop(hp->h_addrtype, *pptr, str, sizeof(str)));
-	printf("Transmit:\n");
-	//gets(sbuf); // get user's text
-	fgets (sbuf, BUFLEN, stdin);
+	cout << "\t\tIP Address: " << inet_ntop(hp->h_addrtype, *pptr, str, sizeof(str)) << endl;
 
-	// Transmit data through the socket
-	send (sd, sbuf, BUFLEN, 0);
+	pthread_create(&recv_thread_handle, 0, handle_recv_thread, (void*) sd);
 
-	printf("Receive:\n");
-	bp = rbuf;
-	bytes_to_read = BUFLEN;
-
-	// client makes repeated calls to recv until no more data is expected to arrive.
-	n = 0;
-	while ((n = recv (sd, bp, bytes_to_read, 0)) < BUFLEN)
+	//TODO: if received command: 'quit' or SIGINT, then break the loop
+	while (1)
 	{
-		bp += n;
-		bytes_to_read -= n;
+		//Get user's message
+		cout << ">> ";
+		fgets (sbuf, BUFLEN, stdin);
+
+		// Transmit data through the socket
+		send (sd, sbuf, BUFLEN, 0);		
 	}
-	printf ("%s\n", rbuf);
-	fflush(stdout);
+
+	cout << "Disconnecting...Goodbye!" << endl;
 	close (sd);
 	return (0);
+}
+
+void * handle_recv_thread(void* args)
+{
+	//printf("Receive:\n");
+	int sd = (int) args;
+	int bytes_to_read = BUFLEN;
+	char *bp, rbuf[BUFLEN];
+	bp = rbuf;
+
+	while (1)
+	{
+		//client makes repeated calls to recv until no more data is expected to arrive.
+		int n = 0;
+		while ((n = recv (sd, bp, bytes_to_read, 0)) < BUFLEN)
+		{
+			bp += n;
+			bytes_to_read -= n;
+		}
+
+		//TODO: write received text into log file
+		cout << "received: " << rbuf << endl;
+		//fflush(stdout);
+	}
 }

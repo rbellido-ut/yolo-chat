@@ -10,6 +10,7 @@ public:
     ServerNetwork() {
         acceptsocket_ = 0;
         listensocket_ = 0;
+        client_list_ = new std::vector<std::string>();
     }
 
     ~ServerNetwork() {
@@ -17,11 +18,14 @@ public:
         close(listensocket_);
     }
 
-    int start_server(int port);
+    bool start_server(int port);
+
+    bool handle_clients();
 
     std::string get_error() {
         return error_;
     }
+
 
 private:
     int acceptsocket_, listensocket_, sockfd_;
@@ -32,6 +36,8 @@ private:
     struct sockaddr_in server_;
     struct sockaddr_in client_addr_;
     fd_set rset_, allset_;
+
+    std::vector<std::string> *client_list_;
 
     char *bp, buf[BUFFER_LEN];
 

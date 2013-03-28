@@ -10,11 +10,16 @@ class ServerSettingsDialog;
 class ServerSettingsDialog : public QDialog
 {
     Q_OBJECT
-    
+signals:
+    void serverIgnite(QString);
+
 public:
     explicit ServerSettingsDialog(QWidget *parent = 0);
     ~ServerSettingsDialog();
     
+private slots:
+    void on_buttonBox_accepted();
+
 private:
     Ui::ServerSettingsDialog *ui;
 };

@@ -2,6 +2,7 @@
 #define CHATWINDOW_H
 
 #include <QMainWindow>
+#include <QMessageBox>
 #include "client/client_net.h"
 #include "server/server_net.h"
 #include "clientsettingsdialog.h"
@@ -18,6 +19,7 @@ class ChatWindow : public QMainWindow
 public:
     explicit ChatWindow(QWidget *parent = 0);
     ~ChatWindow();
+    void ErrorMsg(QString);
 
 public slots:
     void startMuxServer(const QString &);
@@ -35,6 +37,10 @@ private slots:
 
 private:
     Ui::ChatWindow *ui;
+
+    //Keyboard events
+    QKeyEvent *keyEvent;
+    QString *textOfKeyPressed;
 
     //GUI objects
     ClientSettingsDialog *cDlg;
